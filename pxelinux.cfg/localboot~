@@ -1,0 +1,9 @@
+default eda
+display grph
+prompt 1
+timeout 10
+
+label eda
+        kernel /cd/mboot.c32
+        append -c /boot.cfg ks=nfs://nassikka.oizone.net/export/pxeboot/box1.oizone.net +++
+        ipappend 2

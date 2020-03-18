@@ -1,0 +1,9 @@
+default eda
+display grph
+prompt 1
+timeout 10
+
+label eda
+        COM32 chain.c32
+        APPEND hd2
+
