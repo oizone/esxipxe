@@ -1,6 +1,5 @@
 #!/usr/bin/python
 import os
-#print("Running capasityflash!\n")
 os.system('vdq -q > /tmp/capacity.tmp')
 f=open("/tmp/capacity.tmp")
 o=open("/store/.capacityflash.json","w+")
@@ -23,7 +22,3 @@ while line:
 o.write(oldline)
 o.close()
 f.close()
-#o=open("/store/.capacityflash.json")
-#print(o.read())
-#os.system('ls -la /')
-#os.system('ls -la /store/')
