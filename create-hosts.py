@@ -1,46 +1,80 @@
 import xlrd
 import os
+import re
 
 excel=xlrd.open_workbook('esxi-hosts.xlsx')
 sheet=excel.sheet_by_index(0)
-
+bootcfg=open("cd/boot.cfg","r").read()
 i = 2
 
 while i < sheet.nrows:
+    #ks='ks=nfs://{}/{}'.format(sheet.cell(0,1).value,sheet.cell(i,0).value)
+    ks='ks=http://{}/{}'.format(sheet.cell(0,1).value,sheet.cell(i,0).value)
     output=open(sheet.cell(i,0).value,"w+")
-    if os.path.exists("pxelinux.cfg/{}".format(sheet.cell(i,7).value)):
-      os.remove("pxelinux.cfg/{}".format(sheet.cell(i,7).value))
-    pxe=open("pxelinux.cfg/{}".format(sheet.cell(i,7).value),"w+")
 
     output.write('vmaccepteula\n')
  
-    output.write('rootpw {}\n'.format(sheet.cell(i,12).value))
+    output.write('rootpw {}\n'.format(sheet.cell(i,11).value))
     output.write('clearpart --alldrives --overwritevmfs\n')
 
-    output.write('install --firstdisk=usb --overwritevmfs --novmfsondisk\n')
+    output.write('install --firstdisk=usb,local --overwritevmfs --ignoressd --novmfsondisk\n')
     output.write('keyboard Finnish\n')
 
     output.write("network --bootproto=static --device={} --ip={} --netmask={} --gateway={} --nameserver={} --hostname={} --vlanid={} --addvmportgroup=1\n".format(sheet.cell(i,1).value,sheet.cell(i,2).value,sheet.cell(i,3).value,sheet.cell(i,4).value,sheet.cell(i,5).value,sheet.cell(i,0).value,int(sheet.cell(i,6).value)))
 
     output.write('reboot --noeject\n')
 
-    output.write('%pre --interpreter=busybox\n')
-    output.write('cd /vmfs/volumes/remote-install-location/pxelinux.cfg/\n')
+    #output.write('%pre --interpreter=busybox\n')
+    #output.write('cd /vmfs/volumes/remote-install-location/pxelinux.cfg/\n')
 
-    output.write('ln -sf localboot {}\n'.format(sheet.cell(i,7).value))
+    #output.write('ln -sf localboot {}\n'.format(sheet.cell(i,7).value))
 
     output.write('%firstboot --interpreter=busybox\n')
+    capacitydisks=sheet.cell(i,8).value.split(',')
+    for disk in capacitydisks:
+        if disk!='':
+            output.write('esxcli vsan storage tag add -t capacityFlash -d `esxcli storage core device list|grep -B 1 "Display Name:.*{}"|head -n 1`\n'.format(disk))
 
-    output.write('esxcli vsan storage tag add -t capacityFlash -d `esxcli storage core device list|grep -B 1 "Display Name:.*{}"|head -n 1`\n'.format(sheet.cell(i,8).value))
-
-    output.write('esxcli network ip dns search add --domain={}\n'.format(sheet.cell(i,11).value))
+    output.write('esxcli network ip dns search add --domain={}\n'.format(sheet.cell(i,10).value))
 
     output.write('esxcli network vswitch standard portgroup set -v {} -p "VM Network"\n'.format(int(sheet.cell(i,6).value)))
 
-    output.write('echo "server {}" >> /etc/ntp.conf\n'.format(sheet.cell(i,9).value))
-    output.write('echo "server {}" >> /etc/ntp.conf\n'.format(sheet.cell(i,10).value))
+    #output.write('cat > /etc/ntp.conf << __NTP_CONFIG__\n')
+    #output.write('restrict default kod nomodify notrap noquery nopeer\n')
+    #output.write('restrict 127.0.0.1\n')
+    #ntps=sheet.cell(i,9).value.split(',')
+    #for ntp in ntps:
+    #    if ntp!='':
+    #        output.write('server {}\n'.format(ntp))
 
-    output.write('/vmfs/volumes/remote-install-location/post-config.sh\n')
+    #output.write('__NTP_CONFIG__\n')
+    #output.write('/sbin/chkconfig ntpd on\n')
+    #output.write('esxcli network firewall set --default-action false --enabled yes\n')
+    #output.write('FIREWALL_SERVICES="syslog sshClient ntpClient updateManager httpClient netdump"\n')
+    #output.write('for SERVICE in ${FIREWALL_SERVICES}\n')
+    #output.write('do\n')
+    #output.write('esxcli network firewall ruleset set --ruleset-id ${SERVICE} --enabled yes\n')
+    #output.write('done\n')
+    output.write('vim-cmd hostsvc/enable_ssh\n')
+
+    ntps=sheet.cell(i,9).value.split(',')
+    for ntp in ntps:
+        if ntp!='':
+            output.write('echo "server {}" >> /etc/ntp.conf\n'.format(ntp))
+
+
+    output.write('/sbin/chkconfig ntpd on\n')
+    #output.write('/sbin/chkconfig SSH on\n')
+    #output.write('/etc/init.d/ntpd start\n')
+    #output.write('/etc/init.d/SSH start\n')
+    output.write('esxcli system settings advanced set -o /UserVars/HostClientCEIPOptIn -i 2\n')
+    output.write('reboot\n')
+    output.close()
+
+    #output.write('/vmfs/volumes/remote-install-location/post-config.sh\n')
+    if os.path.exists("pxelinux.cfg/{}".format(sheet.cell(i,7).value)):
+        os.remove("pxelinux.cfg/{}".format(sheet.cell(i,7).value))
+    pxe=open("pxelinux.cfg/{}".format(sheet.cell(i,7).value),"w+")
     pxe.write('default vmware\n')
     pxe.write('display grph\n')
     pxe.write('prompt 1\n')
@@ -48,10 +82,21 @@ while i < sheet.nrows:
     pxe.write('\n')
     pxe.write('label vmware\n')
     pxe.write('\tkernel /cd/mboot.c32\n')
-    pxe.write('\tappend -c /boot.cfg ks=nfs://{}/{} +++\n'.format(sheet.cell(0,1).value,sheet.cell(i,0).value))
+    #pxe.write('\tappend -c /boot.cfg ks=nfs://{}/{} +++\n'.format(sheet.cell(0,1).value,sheet.cell(i,0).value))
+    pxe.write('\tappend -c /boot.cfg {} +++\n'.format(ks))
     pxe.write('\tipappend 2\n')
     pxe.close()
-    output.close()
+    if not os.path.exists(sheet.cell(i,7).value):
+        os.mkdir(sheet.cell(i,7).value)
+    boot=open("{}/boot.cfg".format(sheet.cell(i,7).value),"w+")
+    newboot=re.sub("/","",bootcfg,flags=re.M)
+    newboot=re.sub(r'prefix=[^\n]*','prefix=cd/',newboot,flags=re.M)
+    #newboot=re.sub(r'prefix=[^\n]*','prefix=http://10.39.0.66/cd/',newboot,flags=re.M)
+    newboot=re.sub(r'kernelopt=[^\n]*','kernelopt={}'.format(ks),newboot,flags=re.M)
+    boot.write(newboot)
+    boot.close()
+    
+
     i += 1
 
 
