@@ -9,8 +9,10 @@ i = 2
 
 while i < sheet.nrows:
     #ks='ks=nfs://{}/{}'.format(sheet.cell(0,1).value,sheet.cell(i,0).value)
-    ks='ks=http://{}/{}'.format(sheet.cell(0,1).value,sheet.cell(i,0).value)
-    output=open(sheet.cell(i,0).value,"w+")
+    ks='ks=http://{}/{}/{}'.format(sheet.cell(0,1).value,sheet.cell(i,7).value,sheet.cell(i,0).value)
+    if not os.path.exists(sheet.cell(i,7).value):
+        os.mkdir(sheet.cell(i,7).value)
+    output=open("{}/{}".format(sheet.cell(i,7).value,sheet.cell(i,0).value),"w+")
 
     output.write('vmaccepteula\n')
  
@@ -86,12 +88,10 @@ while i < sheet.nrows:
     pxe.write('\tappend -c /boot.cfg {} +++\n'.format(ks))
     pxe.write('\tipappend 2\n')
     pxe.close()
-    if not os.path.exists(sheet.cell(i,7).value):
-        os.mkdir(sheet.cell(i,7).value)
     boot=open("{}/boot.cfg".format(sheet.cell(i,7).value),"w+")
     newboot=re.sub("/","",bootcfg,flags=re.M)
-    newboot=re.sub(r'prefix=[^\n]*','prefix=cd/',newboot,flags=re.M)
-    #newboot=re.sub(r'prefix=[^\n]*','prefix=http://10.39.0.66/cd/',newboot,flags=re.M)
+    #newboot=re.sub(r'prefix=[^\n]*','prefix=cd/',newboot,flags=re.M)
+    newboot=re.sub(r'prefix=[^\n]*','prefix=http://10.39.0.66/cd/',newboot,flags=re.M)
     newboot=re.sub(r'kernelopt=[^\n]*','kernelopt={}'.format(ks),newboot,flags=re.M)
     boot.write(newboot)
     boot.close()
