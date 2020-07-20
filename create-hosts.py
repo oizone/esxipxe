@@ -16,10 +16,10 @@ while i < sheet.nrows:
 
     output.write('vmaccepteula\n')
  
-    output.write('rootpw {}\n'.format(sheet.cell(i,11).value))
+    output.write('rootpw {}\n'.format(sheet.cell(i,12).value))
     output.write('clearpart --alldrives --overwritevmfs\n')
 
-    output.write('install --firstdisk=usb,local --overwritevmfs --ignoressd --novmfsondisk\n')
+    output.write('install {} --overwritevmfs --novmfsondisk\n'.format(sheet.cell(i,8).value))
     output.write('keyboard Finnish\n')
 
     output.write("network --bootproto=static --device={} --ip={} --netmask={} --gateway={} --nameserver={} --hostname={} --vlanid={} --addvmportgroup=1\n".format(sheet.cell(i,1).value,sheet.cell(i,2).value,sheet.cell(i,3).value,sheet.cell(i,4).value,sheet.cell(i,5).value,sheet.cell(i,0).value,int(sheet.cell(i,6).value)))
@@ -32,12 +32,12 @@ while i < sheet.nrows:
     #output.write('ln -sf localboot {}\n'.format(sheet.cell(i,7).value))
 
     output.write('%firstboot --interpreter=busybox\n')
-    capacitydisks=sheet.cell(i,8).value.split(',')
+    capacitydisks=sheet.cell(i,9).value.split(',')
     for disk in capacitydisks:
         if disk!='':
             output.write('esxcli vsan storage tag add -t capacityFlash -d `esxcli storage core device list|grep -B 1 "Display Name:.*{}"|head -n 1`\n'.format(disk))
 
-    output.write('esxcli network ip dns search add --domain={}\n'.format(sheet.cell(i,10).value))
+    output.write('esxcli network ip dns search add --domain={}\n'.format(sheet.cell(i,11).value))
 
     output.write('esxcli network vswitch standard portgroup set -v {} -p "VM Network"\n'.format(int(sheet.cell(i,6).value)))
 
@@ -59,7 +59,7 @@ while i < sheet.nrows:
     #output.write('done\n')
     output.write('vim-cmd hostsvc/enable_ssh\n')
 
-    ntps=sheet.cell(i,9).value.split(',')
+    ntps=sheet.cell(i,10).value.split(',')
     for ntp in ntps:
         if ntp!='':
             output.write('echo "server {}" >> /etc/ntp.conf\n'.format(ntp))
