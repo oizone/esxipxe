@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import xlrd
 import os
 import re
@@ -74,7 +75,7 @@ while i < sheet.nrows:
         output.write('esxcli system settings advanced set -o "/Mem/AllocGuestLargePage" --int-value 0\n')
         output.write('esxcli system settings advanced set -o "/Mem/ShareForceSalting" --int-value 0\n')
     if (sheet.cell(i,15).value == "yes"):
-        output.write('esxcli vsan network ipv4 add -i vmk0\n')
+        output.write('esxcli vsan network ipv4 add -i {}\n'.format(sheet.cell(i,1).value))
         output.write('esxcli vsan cluster new\n')
         output.write('esxcli vsan policy setdefault -c cluster -p "((\"hostFailuresToTolerate\" i0) (\"forceProvisioning\" i1))"\n')
         output.write('esxcli vsan policy setdefault -c vdisk -p "((\"hostFailuresToTolerate\" i0) (\"forceProvisioning\" i1))")"\n')
