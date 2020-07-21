@@ -69,7 +69,18 @@ while i < sheet.nrows:
     #output.write('/sbin/chkconfig SSH on\n')
     #output.write('/etc/init.d/ntpd start\n')
     #output.write('/etc/init.d/SSH start\n')
-    output.write('esxcli system settings advanced set -o /UserVars/HostClientCEIPOptIn -i 2\n')
+    output.write('esxcli system settings advanced set -o /UserVars/HostClientCEIPOptIn -i {}\n'.format(sheet.cell(i,13).value))
+    if (sheet.cell(i,14).value == "yes"):
+        output.write('esxcli system settings advanced set -o "/Mem/AllocGuestLargePage" --int-value 0\n')
+        output.write('esxcli system settings advanced set -o "/Mem/ShareForceSalting" --int-value 0\n')
+    if (sheet.cell(i,15).value == "yes"):
+        output.write('esxcli vsan network ipv4 add -i vmk0\n')
+        output.write('esxcli vsan cluster new\n')
+        output.write('esxcli vsan policy setdefault -c cluster -p "((\"hostFailuresToTolerate\" i0) (\"forceProvisioning\" i1))"\n')
+        output.write('esxcli vsan policy setdefault -c vdisk -p "((\"hostFailuresToTolerate\" i0) (\"forceProvisioning\" i1))")"\n')
+        output.write('esxcli vsan policy setdefault -c vmnamespace -p "((\"hostFailuresToTolerate\" i0) (\"forceProvisioning\" i1))"\n')
+        output.write('esxcli vsan policy setdefault -c vmswap -p "((\"hostFailuresToTolerate\" i0) (\"forceProvisioning\" i1))"\n')
+        output.write('esxcli vsan policy setdefault -c vmem -p "((\"hostFailuresToTolerate\" i0) (\"forceProvisioning\" i1))"\n')
     output.write('reboot\n')
     output.close()
 
