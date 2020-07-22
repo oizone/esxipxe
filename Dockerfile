@@ -2,7 +2,8 @@ FROM mcr.microsoft.com/dotnet/core/sdk:3.1
 LABEL maintainer="oizone@oizone.net"
 
 #ARG GH_RUNNER_VERSION="2.267.1"
-ARG TARGETPLATFORM
+#ARG TARGETPLATFORM
+ARG TARGETPLATFORM="linux/arm/v7"
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 ENV DEBIAN_FRONTEND=noninteractive
