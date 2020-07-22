@@ -1,4 +1,5 @@
 #!/bin/bash
+set
 
 export RUNNER_ALLOW_RUNASROOT=1
 export PATH=$PATH:/actions-runner
@@ -21,6 +22,8 @@ if [[ -n "${ACCESS_TOKEN}" ]]; then
   RUNNER_TOKEN=$(echo "${_TOKEN}" | jq -r .token)
   _SHORT_URL=$(echo "${_TOKEN}" | jq -r .short_url)
 fi
+
+set
 
 echo "Configuring"
 ./config.sh \
