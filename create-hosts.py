@@ -13,7 +13,8 @@ while i < sheet.nrows:
     ks='ks=http://{}/{}/{}'.format(sheet.cell(0,1).value,sheet.cell(i,7).value,sheet.cell(i,0).value)
     if not os.path.exists(sheet.cell(i,7).value):
         os.mkdir(sheet.cell(i,7).value)
-    output=open("{}/{}".format(sheet.cell(i,7).value,sheet.cell(i,0).value),"w+")
+    #output=open("{}/{}".format(sheet.cell(i,7).value,sheet.cell(i,0).value),"w+")
+    output=open("config/{}".format(sheet.cell(i,7).value),"w+")
 
     output.write('vmaccepteula\n')
  
@@ -98,10 +99,11 @@ while i < sheet.nrows:
     pxe.write('\tkernel /cd/mboot.c32\n')
     #pxe.write('\tappend -c /boot.cfg ks=nfs://{}/{} +++\n'.format(sheet.cell(0,1).value,sheet.cell(i,0).value))
     #pxe.write('\tappend -c /{}/boot.cfg {} +++\n'.format(sheet.cell(i,7).value,ks))
-    pxe.write('\tappend -c /{}/boot.cfg +++\n'.format(sheet.cell(i,7).value))
+    pxe.write('\tappend -c /pxelinux.cfg/{}.boot.cfg +++\n'.format(sheet.cell(i,7).value))
     pxe.write('\tipappend 2\n')
     pxe.close()
-    boot=open("{}/boot.cfg".format(sheet.cell(i,7).value),"w+")
+    #boot=open("{}/boot.cfg".format(sheet.cell(i,7).value),"w+")
+    boot=open("pxelinux.cfg/{}.boot.cfg".format(sheet.cell(i,7).value),"w+")
     newboot=re.sub("/","",bootcfg,flags=re.M)
     newboot=re.sub(r'prefix=[^\n]*','prefix=cd/',newboot,flags=re.M)
     #newboot=re.sub(r'prefix=[^\n]*','prefix=http://{}/cd/'.format(sheet.cell(0,1).value),newboot,flags=re.M)
