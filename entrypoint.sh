@@ -1,5 +1,4 @@
 #!/bin/bash
-set
 
 export RUNNER_ALLOW_RUNASROOT=1
 export PATH=$PATH:/actions-runner
@@ -23,8 +22,6 @@ if [[ -n "${ACCESS_TOKEN}" ]]; then
   _SHORT_URL=$(echo "${_TOKEN}" | jq -r .short_url)
 fi
 
-set
-
 echo "Configuring"
 ./config.sh \
     --url "${_SHORT_URL}" \
@@ -37,5 +34,12 @@ echo "Configuring"
 
 unset RUNNER_TOKEN
 trap deregister_runner SIGINT SIGQUIT SIGTERM
+
+git clone "${_SHORT_URL}" /tftp
+mkdir /tftp/cd
+7z x -o/tftp/cd /ESXi.iso
+dhcpd -4 
+/usr/sbin/in.tftpd --listen --address 0.0.0.0:69 --secure --retransmit 1000000 --blocksize 512 -vvv /tftp
+nginx
 
 ./bin/runsvc.sh
