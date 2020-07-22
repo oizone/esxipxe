@@ -4,8 +4,9 @@ def application(env, start_response):
     host=env['PATH_INFO'].split('/')[1]
     if(os.path.isfile(filename)):
         start_response('200 OK', [('Content-Type','text/plain')])
-        file=open(filename,'r')
-        return [file.read()]
+        file=open(filename,'r').read()
+        os.remove(filename)
+        return [file]
     else:
         start_response('404 Not Found',[('Content-Type','text/plain')])
         return ["Not Found"]
