@@ -5,7 +5,7 @@ import re
 
 excel=xlrd.open_workbook('esxi-hosts.xlsx')
 sheet=excel.sheet_by_index(0)
-bootcfg=open("cd/BOOT.CFG","r").read()
+bootcfg=open("cd/boot.cfg","r").read()
 i = 2
 
 while i < sheet.nrows:
