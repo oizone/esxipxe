@@ -12,8 +12,10 @@ while i < sheet.nrows:
     #ks='ks=nfs://{}/{}'.format(sheet.cell(0,1).value,sheet.cell(i,0).value)
     #ks='ks=http://{}/{}/{}'.format(sheet.cell(0,1).value,sheet.cell(i,7).value,sheet.cell(i,0).value)
     ks='ks=http://{}/{}'.format(sheet.cell(0,1).value,sheet.cell(i,7).value)
-    if not os.path.exists(sheet.cell(i,7).value):
-        os.mkdir(sheet.cell(i,7).value)
+    #if not os.path.exists(sheet.cell(i,7).value):
+    #    os.mkdir(sheet.cell(i,7).value)
+    if not os.path.exists("config"):
+        os.mkdir("config")
     #output=open("{}/{}".format(sheet.cell(i,7).value,sheet.cell(i,0).value),"w+")
     output=open("config/{}".format(sheet.cell(i,7).value),"w+")
 
