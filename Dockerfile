@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1
 LABEL maintainer="oizone@oizone.net"
 
-ARG GH_RUNNER_VERSION="2.267.1"
+#ARG GH_RUNNER_VERSION="2.267.1"
 ARG TARGETPLATFORM
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -18,7 +18,7 @@ WORKDIR /actions-runner
 COPY install_actions.sh /actions-runner
 
 RUN chmod +x /actions-runner/install_actions.sh \
-  && /actions-runner/install_actions.sh ${GH_RUNNER_VERSION} ${TARGETPLATFORM} \
+  && /actions-runner/install_actions.sh ${TARGETPLATFORM} \
   && rm /actions-runner/install_actions.sh
 
 COPY entrypoint.sh /
