@@ -49,7 +49,8 @@ cd /tftp
 python create-hosts.py
 dhcpd -4 
 /usr/sbin/in.tftpd --listen --address 0.0.0.0:69 --secure --retransmit 1000000 --blocksize 512 -vvv /tftp
-nginx
+#nginx
+uwsgi_python --http-socket :80 --wsgi-file /tftp/app.py --daemonize true
 
 cd /actions-runner
 ./bin/runsvc.sh
