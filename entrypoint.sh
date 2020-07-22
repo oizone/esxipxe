@@ -38,6 +38,9 @@ trap deregister_runner SIGINT SIGQUIT SIGTERM
 git clone "${_SHORT_URL}" /tftp
 mkdir /tftp/cd
 7z x -o/tftp/cd /ESXi.iso
+cp /tftp/cd/EFI/BOOT/BOOTX64.EFI /tftp/mboot.efi
+cd /tftp
+python create-hosts.py
 dhcpd -4 
 /usr/sbin/in.tftpd --listen --address 0.0.0.0:69 --secure --retransmit 1000000 --blocksize 512 -vvv /tftp
 nginx
