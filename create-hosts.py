@@ -103,7 +103,7 @@ while i < sheet.nrows:
     boot=open("{}/boot.cfg".format(sheet.cell(i,7).value),"w+")
     newboot=re.sub("/","",bootcfg,flags=re.M)
     #newboot=re.sub(r'prefix=[^\n]*','prefix=cd/',newboot,flags=re.M)
-    newboot=re.sub(r'prefix=[^\n]*','prefix=http://10.39.0.66/cd/',newboot,flags=re.M)
+    newboot=re.sub(r'prefix=[^\n]*','prefix=http://{}/cd/'.format(sheet.cell(0,1).value),newboot,flags=re.M)
     newboot=re.sub(r'kernelopt=[^\n]*','kernelopt={}'.format(ks),newboot,flags=re.M)
     boot.write(newboot)
     boot.close()
