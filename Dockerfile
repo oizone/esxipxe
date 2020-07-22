@@ -13,7 +13,7 @@ ARG APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=yes
 RUN echo deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main | tee -a /etc/apt/sources.list
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367
 RUN apt-get update
-RUN apt-get install -y --no-install-recommends jq python-ncclient ansible isc-dhcp-server tftp-hpa nginx p7zip python-xlrd
+RUN apt-get install -y --no-install-recommends jq python-ncclient ansible isc-dhcp-server tftpd-hpa nginx p7zip python-xlrd
 
 WORKDIR /actions-runner
 COPY install_actions.sh /actions-runner
@@ -21,6 +21,8 @@ COPY install_actions.sh /actions-runner
 RUN chmod +x /actions-runner/install_actions.sh \
   && /actions-runner/install_actions.sh ${TARGETPLATFORM} \
   && rm /actions-runner/install_actions.sh
+
+RUN touch /var/lib/dhcp/dhcpd.leases
 
 COPY entrypoint.sh /
 RUN chmod +x /entrypoint.sh
