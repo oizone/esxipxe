@@ -38,7 +38,7 @@ fi
 
 echo "Configuring"
 
-echo "URL:{_SHORT_URL}"
+echo "URL:${_SHORT_URL}"
 echo "token ${RUNNER_TOKEN}" 
 echo "name ${_RUNNER_NAME}" 
 echo "work ${_RUNNER_WORKDIR}" 
