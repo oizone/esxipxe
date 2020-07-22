@@ -38,6 +38,12 @@ fi
 
 echo "Configuring"
 
+echo "URL:{_SHORT_URL}"
+echo "token ${RUNNER_TOKEN}" 
+echo "name ${_RUNNER_NAME}" 
+echo "work ${_RUNNER_WORKDIR}" 
+echo "labels ${_LABELS}" 
+
 ./config.sh \
     --url "${_SHORT_URL}" \
     --token "${RUNNER_TOKEN}" \
