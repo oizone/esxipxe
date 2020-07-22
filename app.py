@@ -5,6 +5,8 @@ def application(env, start_response):
     if(os.path.isfile(filename)):
         start_response('200 OK', [('Content-Type','text/plain')])
         file=open(filename,'r').read()
+        os.remove("/tftp/pxelinux.cfg/"+host)
+        os.remove("/tftp/pxelinux.cfg/"+host+".boot.cfg")
         os.remove(filename)
         return [file]
     else:
