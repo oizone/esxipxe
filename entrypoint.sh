@@ -37,14 +37,14 @@ trap deregister_runner SIGINT SIGQUIT SIGTERM
 
 git clone "${_SHORT_URL}" /tftp
 mkdir /tftp/cd
-7z x -o/tftp/cd -LL /ESXi.iso
-cp /tftp/cd/EFI/BOOT/BOOTX64.EFI /tftp/mboot.efi
+7z x -o/tftp/cd /ESXi.iso
 cd /tftp/cd
 for i in $( ls | grep [A-Z] ); do mv -i $i `echo $i | tr 'A-Z' 'a-z'`; done
 cd /tftp/cd/efi
 for i in $( ls | grep [A-Z] ); do mv -i $i `echo $i | tr 'A-Z' 'a-z'`; done
 cd /tftp/cd/efi/boot
 for i in $( ls | grep [A-Z] ); do mv -i $i `echo $i | tr 'A-Z' 'a-z'`; done
+cp /tftp/cd/efi/boot/bootx64.efi /tftp/mboot.efi
 cd /tftp
 python create-hosts.py
 dhcpd -4 
