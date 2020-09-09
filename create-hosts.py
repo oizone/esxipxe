@@ -86,9 +86,9 @@ while i < sheet.nrows:
         output.write('esxcli vsan policy setdefault -c vmnamespace -p "((\"hostFailuresToTolerate\" i0) (\"forceProvisioning\" i1))"\n')
         output.write('esxcli vsan policy setdefault -c vmswap -p "((\"hostFailuresToTolerate\" i0) (\"forceProvisioning\" i1))"\n')
         output.write('esxcli vsan policy setdefault -c vmem -p "((\"hostFailuresToTolerate\" i0) (\"forceProvisioning\" i1))"\n')
-    output.write('esxcli network ip interface remove --interface-name=vmk1\n')
-    output.write('esxcli network vswitch standard portgroup remove --portgroup-name="iDRAC Network" --vswitch-name=vSwitchiDRACvusb\n')
-    output.write('esxcli network vswitch standard remove --vswitch-name=vSwitchiDRACvusb\n')
+    output.write('#esxcli network ip interface remove --interface-name=vmk1\n')
+    output.write('#esxcli network vswitch standard portgroup remove --portgroup-name="iDRAC Network" --vswitch-name=vSwitchiDRACvusb\n')
+    output.write('#esxcli network vswitch standard remove --vswitch-name=vSwitchiDRACvusb\n')
     output.write('reboot\n')
     output.close()
 
