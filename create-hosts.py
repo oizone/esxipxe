@@ -91,7 +91,8 @@ while i < sheet.nrows:
     output.write('#esxcli network vswitch standard remove --vswitch-name=vSwitchiDRACvusb\n')
     output.write('reboot\n')
     output.close()
-
+    os.symlink("config/{}".format(sheet.cell(i,7).value),"config/{}".format(sheet.cell(i,0).value))
+    
     #output.write('/vmfs/volumes/remote-install-location/post-config.sh\n')
     if os.path.exists("pxelinux.cfg/{}".format(sheet.cell(i,7).value)):
         os.remove("pxelinux.cfg/{}".format(sheet.cell(i,7).value))
